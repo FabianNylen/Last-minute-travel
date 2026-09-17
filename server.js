@@ -311,7 +311,18 @@ server.headersTimeout = 0;
 server.requestTimeout = 0;
 server.keepAliveTimeout = 65000;
 
+/** Stäng snyggt: avbryt pågående AI-anrop så att inget fortsätter i bakgrunden. */
+function shutdown(signal) {
+  console.log(`\n  Stänger ner (${signal}) …`);
+  ai.shutdown();
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(0), 3000).unref();
+}
+
 if (require.main === module) {
+  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+
   server.listen(PORT, HOST, () => {
     console.log('');
     console.log('  Weekendkurator  ·  AI-driven sista minuten-research');

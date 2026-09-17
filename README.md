@@ -49,8 +49,14 @@ Prova med:
 | Resestil | City, Mat, Nattliv |
 | Land / region | tomt (var som helst) |
 
-En sökning tar **3–8 minuter**. AI:n gör riktiga webbsökningar för varje destination
-— flyg, hotell och events — och du ser sökningarna live medan de pågår.
+En sökning tar **6–12 minuter** och kostar några dollar i API-användning. AI:n gör
+riktiga webbsökningar för varje destination — flyg, hotell och events — och du ser
+sökningarna live medan de pågår.
+
+I en testkörning från Göteborg (fredag 16:00 → söndag 20:00, 6 000 kr, city/mat/nattliv)
+gjorde researchen **67 webbsökningar** på knappt 12 minuter och landade i Riga, Budapest
+och Köpenhamn — alla inom budget och tidsfönster, alla med källor och uppskattade priser
+tydligt märkta.
 
 ---
 
@@ -164,7 +170,7 @@ Alla är frivilliga.
 | `HOST` | `127.0.0.1` | Bind-adress |
 | `CLAUDE_BIN` | `claude` | Sökväg till Claude CLI |
 | `CLAUDE_MODEL` | `sonnet` | Modell |
-| `AI_MAX_BUDGET_USD` | `5` | Kostnadstak per AI-anrop |
+| `AI_MAX_BUDGET_USD` | `12` | Kostnadstak per AI-anrop |
 | `RESEARCH_TIMEOUT_MS` | `660000` | Timeout för researchsteget |
 | `EDITOR_TIMEOUT_MS` | `300000` | Timeout för redaktörssteget |
 | `UNSPLASH_ACCESS_KEY` | — | Ger snyggare bilder om du har en nyckel |
@@ -200,6 +206,7 @@ Det här är en MVP:
 - Ingen databas, ingen inloggning, ingen bokning och ingen betalning.
 - Flygtider och priser är research, inte bokningsbara offerter. Kontrollera alltid
   hos leverantören innan du bokar.
-- En sökning tar flera minuter och kostar en slant i API-användning, eftersom AI:n
-  gör riktiga webbsökningar per destination.
+- En sökning tar 6–12 minuter och kostar några dollar, eftersom AI:n gör riktiga
+  webbsökningar per destination. Sätt `AI_MAX_BUDGET_USD` lägre om du vill ha ett
+  hårdare kostnadstak — researchen blir då mindre bred.
 - Resultatet cachas inte mellan sökningar.

@@ -378,6 +378,14 @@ input:focus-visible {
   max-width: 40ch;
 }
 
+.loading-elapsed {
+  margin-top: .75rem;
+  font-size: .82rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  min-height: 1.4em;
+}
+
 .steps {
   list-style: none;
   margin: 2.75rem 0 0;

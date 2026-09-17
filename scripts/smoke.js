@@ -147,6 +147,25 @@ test('tid på plats härleds när AI:n inte angav den', () => {
   assert.strictEqual(kept[0].isDirect, true);
 });
 
+test('nattflyg hem som landar efter midnatt kastas bort', () => {
+  // Lyfter 23:00 på söndagen, landar 01:00 — alltså 01:00 på MÅNDAGEN,
+  // långt efter "senast hemma söndag 20:00".
+  const { kept, rejected } = travel.enforceHardConstraints(
+    [candidate({ inbound: { date: '2099-01-11', departTime: '23:00', arriveTime: '01:00', direct: true, durationMinutes: 120 } })],
+    criteria);
+  assert.strictEqual(kept.length, 0, 'nattflyget slank igenom hemkomstkravet');
+  assert.match(rejected[0].reasons.join(' '), /efter senast hemma/);
+});
+
+test('nattflyg ut ger rätt tid på plats', () => {
+  // Lyfter 23:30 fredag, landar 01:00 lördag -> 39 h på plats, inte 63.
+  const { kept } = travel.enforceHardConstraints(
+    [candidate({ outbound: { date: '2099-01-09', departTime: '23:30', arriveTime: '01:00', direct: true, durationMinutes: 90 } })],
+    criteria);
+  assert.strictEqual(kept.length, 1);
+  assert.strictEqual(kept[0].timeAtDestinationHours, 39);
+});
+
 test('gränsfall: avresa exakt på minuten godkänns', () => {
   const { kept } = travel.enforceHardConstraints(
     [candidate({ outbound: { date: '2099-01-09', departTime: '16:00', arriveTime: '17:30', direct: true, durationMinutes: 90 } })],

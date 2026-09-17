@@ -17,6 +17,9 @@ const stages = {
 let currentSource = null;   // EventSource
 let lastTrips = [];
 let lastFocus = null;
+let elapsedTimer = null;
+let searchStartedAt = 0;
+let lastProgressAt = 0;
 
 /* ------------------------------------------------------- hjälpare */
 
@@ -180,6 +183,37 @@ function resetLoading() {
   $('#log').innerHTML = '';
   $('#loading-sub').textContent = 'Startar research …';
   document.querySelectorAll('.steps li').forEach((li) => li.classList.remove('active', 'done'));
+  startElapsedTimer();
+}
+
+/**
+ * Researchen tar flera minuter, och mellan sista webbsökningen och det färdiga
+ * svaret kommer inga statusuppdateringar alls. Utan en klocka ser sidan ut att
+ * ha hängt sig. Den här visar att något fortfarande händer.
+ */
+function startElapsedTimer() {
+  stopElapsedTimer();
+  searchStartedAt = Date.now();
+  lastProgressAt = Date.now();
+
+  const tick = () => {
+    const secs = Math.floor((Date.now() - searchStartedAt) / 1000);
+    const idle = Math.floor((Date.now() - lastProgressAt) / 1000);
+    const time = secs < 60
+      ? `${secs} s`
+      : `${Math.floor(secs / 60)} min ${String(secs % 60).padStart(2, '0')} s`;
+
+    $('#loading-elapsed').textContent = idle > 25
+      ? `${time} · sammanställer, det här steget kan ta någon minut`
+      : time;
+  };
+
+  tick();
+  elapsedTimer = setInterval(tick, 1000);
+}
+
+function stopElapsedTimer() {
+  if (elapsedTimer) { clearInterval(elapsedTimer); elapsedTimer = null; }
 }
 
 const STEP_ORDER = ['research', 'weather', 'editor', 'images'];
@@ -211,6 +245,7 @@ function listen(jobId) {
   source.addEventListener('progress', (e) => {
     let payload;
     try { payload = JSON.parse(e.data); } catch { return; }
+    lastProgressAt = Date.now();
     markStep(payload.step);
     $('#loading-sub').textContent = payload.message;
     addLogLine(payload.message);
@@ -218,6 +253,7 @@ function listen(jobId) {
 
   source.addEventListener('done', (e) => {
     closeSource();
+    stopElapsedTimer();
     let payload;
     try { payload = JSON.parse(e.data); } catch {
       return showError({ message: 'Kunde inte läsa resultatet. Prova igen.' });
@@ -227,6 +263,7 @@ function listen(jobId) {
 
   source.addEventListener('failed', (e) => {
     closeSource();
+    stopElapsedTimer();
     let payload = {};
     try { payload = JSON.parse(e.data); } catch { /* ignoreras */ }
     showError(payload);
@@ -249,6 +286,7 @@ function closeSource() {
 }
 
 function showError(payload) {
+  stopElapsedTimer();
   $('#error-message').textContent = payload.message || 'Något gick fel. Prova igen.';
   const detail = $('#error-detail');
   if (payload.detail) {
@@ -582,6 +620,7 @@ function init() {
 
   $('#cancel-btn').addEventListener('click', () => {
     closeSource();
+    stopElapsedTimer();
     showStage('search');
   });
 
