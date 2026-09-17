@@ -387,7 +387,7 @@ function tripCardHtml(trip, variant) {
         ${trip.tagline ? `<p class="trip-tagline">${h(trip.tagline)}</p>` : ''}
         ${variant === 'hero' && trip.why ? `<p class="trip-why">${h(trip.why)}</p>` : ''}
         ${factsHtml(trip)}
-        <span class="trip-cta">Se hela resan</span>
+        <span class="trip-cta">Se hela resan och boka</span>
       </div>
     </button>`;
 }
@@ -470,6 +470,25 @@ function listSection(items, renderItem, emptyText) {
   return `<ul class="list-plain">${items.map(renderItem).join('')}</ul>`;
 }
 
+/** Bokningsknappar. Länkarna byggs i backend från ort och datum — aldrig av AI:n. */
+/** Booking-skalan i ord, så att 8.2 betyder något för den som inte bokar ofta. */
+function ratingWord(r) {
+  if (r >= 9) return 'utmärkt';
+  if (r >= 8) return 'mycket bra';
+  if (r >= 7) return 'bra';
+  if (r >= 6) return 'okej';
+  return 'medel';
+}
+
+function bookingHtml(links, kind) {
+  const list = (links && links[kind]) || [];
+  const safe = list.map((l) => ({ label: l.label, url: safeUrl(l.url) })).filter((l) => l.url);
+  if (!safe.length) return '';
+  return `<div class="booking-row">${safe.map((l, i) => `
+    <a class="btn-book ${i === 0 ? 'btn-book--primary' : ''}" href="${h(l.url)}"
+       target="_blank" rel="noopener noreferrer">${h(l.label)}</a>`).join('')}</div>`;
+}
+
 function detailHtml(trip) {
   const imgUrl = safeUrl(trip.image && trip.image.url);
 
@@ -486,7 +505,9 @@ function detailHtml(trip) {
   const hotel = trip.hotel || {};
   const hotelRows = [
     ['Hotell', hotel.name ? h(hotel.name) : '<span class="flag flag--unk">Ej bokat förslag</span>'],
-    ['Betyg', Number.isFinite(num(hotel.rating)) ? `${h(num(hotel.rating))} / 10` : '<span class="flag flag--unk">Okänt</span>'],
+    ['Betyg', Number.isFinite(num(hotel.rating))
+      ? `${h(num(hotel.rating))} / 10 <small style="color:var(--ink-faint);font-weight:400">${h(ratingWord(num(hotel.rating)))}</small>`
+      : '<span class="flag flag--unk">Okänt</span>'],
     ['Område', hotel.area ? h(hotel.area) : '<span class="flag flag--unk">Okänt</span>'],
     ['Pris totalt', priceOrMissing(hotel.totalSek, hotel.priceConfidence)],
     ['Per natt', priceOrMissing(hotel.pricePerNightSek, hotel.priceConfidence)],
@@ -512,6 +533,8 @@ function detailHtml(trip) {
           <div><div class="fact-label">Total restid</div><div class="fact-value">${h(formatDuration(trip.totalTravelTimeMinutes) || 'Okänt')}</div></div>
           <div><div class="fact-label">Tid på plats</div><div class="fact-value">${Number.isFinite(num(trip.timeAtDestinationHours)) ? `${h(Math.round(num(trip.timeAtDestinationHours)))} h` : 'Okänt'}</div></div>
         </div>
+        ${bookingHtml(trip.booking, 'flights')}
+        <p class="book-note">Flygtiderna ovan kommer från AI:ns research. Kontrollera dem i bokningen — exakta avgångar kan skilja sig.</p>
       </section>
 
       <section class="detail-section">
@@ -520,6 +543,9 @@ function detailHtml(trip) {
           ${hotelRows.map(([k, v]) => `<div><div class="fact-label">${h(k)}</div><div class="fact-value">${v}</div></div>`).join('')}
         </div>
         ${hotel.note ? `<p class="leg-meta" style="margin-top:1rem">${h(hotel.note)}</p>` : ''}
+        ${!Number.isFinite(num(hotel.rating)) && hotel.name
+          ? '<p class="book-note">AI:n hittade inget verifierat betyg för hotellet. Kolla omdömena innan du bokar.</p>' : ''}
+        ${bookingHtml(trip.booking, 'hotel')}
       </section>
 
       <section class="detail-section">

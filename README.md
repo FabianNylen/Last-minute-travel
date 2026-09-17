@@ -177,6 +177,20 @@ Alla är frivilliga.
 
 ---
 
+## Bokning
+
+Appen bokar inget själv, men varje resa har färdiga länkar till sökresultat med
+rätt orter och datum ifyllda:
+
+- **Flyg** — Google Flights och Skyscanner
+- **Hotell** — Booking.com, med hotellnamnet och in-/utcheckning förifyllt
+- **Omdömen** — en sökning på hotellet, så du kan bedöma kvaliteten själv
+
+Länkarna byggs **deterministiskt i `lib/booking.js`**, aldrig av AI:n. En modell
+som ombeds hitta på en boknings-URL gissar parametrar och producerar länkar som
+går till fel datum eller 404. Här sätts orten och datumen ihop enligt varje sajts
+publika format, så länken stämmer alltid med resan som visas.
+
 ## Datakällor
 
 - **Väder** — [Open-Meteo](https://open-meteo.com/), ingen nyckel. Prognos ges ca 16 dagar
@@ -190,12 +204,18 @@ Alla är frivilliga.
 ## Tester
 
 ```bash
-npm run check   # syntaxkontroll av alla filer
-npm run smoke   # validering + hårda krav, utan AI-anrop
+npm run check      # syntaxkontroll av alla filer
+npm test           # allt nedan, utan AI-anrop
+npm run smoke      # validering + hårda krav
+npm run test:api   # väder, bilder och bokningslänkar mot stubbade API-svar
 ```
 
-`smoke.js` testar bland annat att resor över budget, för tidig avresa, för sen hemkomst
-och okända priser alla kastas bort.
+`smoke.js` testar att resor över budget, för tidig avresa, för sen hemkomst, nattflyg
+som landar efter midnatt och okända priser alla kastas bort.
+
+`offline-api-test.js` kör väder- och bildmodulerna mot svar i exakt det format
+Open-Meteo och Wikipedia returnerar. Det täcker URL:er, parsning, svensk text,
+fallback-ordning och felhantering — allt utom själva nätverkshoppet.
 
 ---
 

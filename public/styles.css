@@ -845,6 +845,44 @@ input:focus-visible {
   background: var(--clay);
 }
 
+.booking-row {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.btn-book {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .72rem 1.25rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: .9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all .18s var(--ease);
+}
+.btn-book::after { content: "↗"; font-size: .8em; opacity: .55; }
+.btn-book:hover { border-color: var(--ink); transform: translateY(-1px); }
+
+.btn-book--primary {
+  background: var(--green);
+  border-color: var(--green);
+  color: #F7F4EE;
+}
+.btn-book--primary:hover { background: #163027; border-color: #163027; }
+
+.book-note {
+  margin-top: .9rem;
+  font-size: .82rem;
+  color: var(--ink-faint);
+  max-width: 60ch;
+}
+
 .sources-list { display: flex; flex-direction: column; gap: .5rem; }
 .sources-list a { color: var(--green); font-size: .89rem; word-break: break-word; }
 

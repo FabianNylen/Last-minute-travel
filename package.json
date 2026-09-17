@@ -10,8 +10,10 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "check": "node --check server.js && node --check lib/ai.js && node --check lib/travel.js && node --check lib/weather.js && node --check lib/images.js && node --check public/app.js",
-    "smoke": "node scripts/smoke.js"
+    "check": "node --check server.js && node --check lib/ai.js && node --check lib/travel.js && node --check lib/weather.js && node --check lib/images.js && node --check lib/booking.js && node --check public/app.js",
+    "smoke": "node scripts/smoke.js",
+    "test": "node scripts/smoke.js && node scripts/offline-api-test.js",
+    "test:api": "node scripts/offline-api-test.js"
   },
   "dependencies": {}
 }
