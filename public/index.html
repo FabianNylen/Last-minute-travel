@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="AI-driven sista minuten-research. Vi hittar de tre weekendresor som faktiskt är värda att boka.">
+<meta name="theme-color" content="#FAF7F1">
+<title>Weekendkurator — din nästa weekend, redan planerad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231B3A2F'/><text y='68' x='50' text-anchor='middle' font-size='54' font-family='Georgia,serif' fill='%23FAF7F1'>W</text></svg>">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="wordmark" href="/">
+    <span class="wordmark-mark" aria-hidden="true"></span>
+    Weekendkurator
+  </a>
+  <p class="site-header-note">AI-kuraterade weekendresor</p>
+</header>
+
+<main id="main">
+
+  <!-- ===================================================== SÖK ===== -->
+  <section class="stage" id="stage-search">
+
+    <div class="hero">
+      <p class="eyebrow">Sista minuten, utan stressen</p>
+      <h1 class="hero-title">Din nästa weekend,<br>redan planerad.</h1>
+      <p class="hero-sub">
+        Berätta när du kan åka och när du måste vara hemma.
+        Vi hittar de tre resorna som faktiskt är värda att boka.
+      </p>
+    </div>
+
+    <form class="search-card" id="search-form" novalidate>
+      <div class="field-grid">
+
+        <div class="field field-wide">
+          <label for="origin">Från</label>
+          <input type="text" id="origin" name="origin" placeholder="Göteborg"
+                 autocomplete="off" list="origin-suggestions" required>
+          <datalist id="origin-suggestions">
+            <option value="Göteborg"></option>
+            <option value="Stockholm"></option>
+            <option value="Malmö"></option>
+            <option value="Köpenhamn"></option>
+            <option value="Oslo"></option>
+            <option value="Umeå"></option>
+          </datalist>
+        </div>
+
+        <div class="field field-wide">
+          <label for="region">Land / region <span class="optional">frivilligt</span></label>
+          <input type="text" id="region" name="region" placeholder="Var som helst"
+                 autocomplete="off" list="region-suggestions">
+          <datalist id="region-suggestions">
+            <option value="Europa"></option>
+            <option value="Sydeuropa"></option>
+            <option value="Italien"></option>
+            <option value="Spanien"></option>
+            <option value="Tyskland"></option>
+            <option value="Portugal"></option>
+            <option value="Baltikum"></option>
+            <option value="Balkan"></option>
+          </datalist>
+        </div>
+
+        <div class="field">
+          <label for="departDate">Tidigaste avresa</label>
+          <div class="field-pair">
+            <input type="date" id="departDate" name="departDate" required>
+            <input type="time" id="departTime" name="departTime" value="16:00" step="900" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="returnDate">Senast hemma</label>
+          <div class="field-pair">
+            <input type="date" id="returnDate" name="returnDate" required>
+            <input type="time" id="returnTime" name="returnTime" value="20:00" step="900" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="budget">Budget <span class="optional">per person, flyg + hotell</span></label>
+          <div class="input-suffix">
+            <input type="number" id="budget" name="budget" min="1000" step="100"
+                   value="6000" inputmode="numeric" required>
+            <span class="suffix">kr</span>
+          </div>
+        </div>
+
+        <div class="field field-direct">
+          <label class="switch">
+            <input type="checkbox" id="preferDirect" name="preferDirect" checked>
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-label">Föredra direktflyg</span>
+          </label>
+        </div>
+
+        <div class="field field-full">
+          <label id="styles-label">Resestil</label>
+          <div class="chips" role="group" aria-labelledby="styles-label">
+            <label class="chip"><input type="checkbox" name="styles" value="city"><span>City</span></label>
+            <label class="chip"><input type="checkbox" name="styles" value="mat"><span>Mat</span></label>
+            <label class="chip"><input type="checkbox" name="styles" value="nattliv"><span>Nattliv</span></label>
+            <label class="chip"><input type="checkbox" name="styles" value="kultur"><span>Kultur</span></label>
+            <label class="chip"><input type="checkbox" name="styles" value="sol"><span>Sol</span></label>
+            <label class="chip"><input type="checkbox" name="styles" value="natur"><span>Natur</span></label>
+            <label class="chip"><input type="checkbox" name="styles" value="avkoppling"><span>Avkoppling</span></label>
+            <label class="chip"><input type="checkbox" name="styles" value="romantiskt"><span>Romantiskt</span></label>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="form-error" id="form-error" role="alert" hidden></p>
+
+      <button type="submit" class="btn-primary" id="submit-btn">
+        <span>Hitta min weekend</span>
+      </button>
+
+      <p class="form-note">
+        Researchen görs live av en AI som söker på webben. Det tar några minuter.
+      </p>
+    </form>
+  </section>
+
+  <!-- ================================================== LADDAR ===== -->
+  <section class="stage" id="stage-loading" hidden>
+    <div class="loading">
+      <div class="loading-visual" aria-hidden="true">
+        <span class="orbit"></span><span class="orbit"></span><span class="orbit"></span>
+      </div>
+      <h2 class="loading-title">Vi letar upp din weekend</h2>
+      <p class="loading-sub" id="loading-sub">Startar research …</p>
+
+      <ol class="steps" id="steps">
+        <li data-step="research"><span class="step-dot"></span>Research: flyg, hotell, events</li>
+        <li data-step="weather"><span class="step-dot"></span>Väderprognos</li>
+        <li data-step="editor"><span class="step-dot"></span>Redaktören väljer tre resor</li>
+        <li data-step="images"><span class="step-dot"></span>Bilder och sammanställning</li>
+      </ol>
+
+      <div class="log" id="log" aria-live="polite" aria-label="Researchlogg"></div>
+
+      <button type="button" class="btn-ghost" id="cancel-btn">Avbryt</button>
+    </div>
+  </section>
+
+  <!-- ================================================ RESULTAT ===== -->
+  <section class="stage" id="stage-results" hidden>
+    <div class="results-head">
+      <p class="eyebrow">Tre resor värda att ta</p>
+      <h2 class="results-title" id="results-title">Din weekend</h2>
+      <p class="results-meta" id="results-meta"></p>
+      <button type="button" class="btn-ghost" id="new-search-btn">Ny sökning</button>
+    </div>
+
+    <div id="results-list" class="results-list"></div>
+
+    <p class="disclaimer">
+      Priser och tillgänglighet kan ändras snabbt.
+      Kontrollera alltid slutpriset hos bokningsleverantören.
+    </p>
+
+    <p class="editor-note" id="editor-note"></p>
+  </section>
+
+  <!-- =================================================== FEL ======= -->
+  <section class="stage" id="stage-error" hidden>
+    <div class="error-box">
+      <h2 class="error-title">Det gick inte att slutföra sökningen</h2>
+      <p class="error-message" id="error-message"></p>
+      <details class="error-detail" id="error-detail" hidden>
+        <summary>Teknisk information</summary>
+        <pre id="error-detail-text"></pre>
+      </details>
+      <button type="button" class="btn-primary" id="retry-btn"><span>Försök igen</span></button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================================================== DETALJVY ===== -->
+<div class="detail-overlay" id="detail-overlay" hidden>
+  <div class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title" tabindex="-1">
+    <button type="button" class="detail-close" id="detail-close" aria-label="Stäng">&times;</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>Weekendkurator — MVP. Research görs av AI och kan innehålla fel. Kontrollera alltid detaljer före bokning.</p>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>

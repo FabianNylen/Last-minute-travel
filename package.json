@@ -1,0 +1,17 @@
+{
+  "name": "weekendkurator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-driven sista minuten-reseplattform. Hittar de tre weekendresor som faktiskt är värda att boka.",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "check": "node --check server.js && node --check lib/ai.js && node --check lib/travel.js && node --check lib/weather.js && node --check lib/images.js && node --check public/app.js",
+    "smoke": "node scripts/smoke.js"
+  },
+  "dependencies": {}
+}
